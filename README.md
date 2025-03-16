@@ -4,10 +4,10 @@ This PowerShell script automatically organizes files from your Desktop into cate
 
 ## Features
 
-- **Dynamic Folder Creation**: The script dynamically identifies the user's Desktop path and creates a `file_organization` folder if it doesn't already exist.
-- **Subfolder Organization**: The script creates subfolders for PDFs, Excel files, Text files, and Image files.
-- **File Sorting**: Files are automatically moved to their respective subfolders based on their file extensions (PDF, Excel, Text, Image).
-- **File Type Support**: Supported file types include:
+- Dynamic Folder Creation: The script dynamically identifies the user's Desktop path and creates a `file_organization` folder if it doesn't already exist.
+- Subfolder Organization: The script creates subfolders for PDFs, Excel files, Text files, and Image files.
+- File Sorting: Files are automatically moved to their respective subfolders based on their file extensions (PDF, Excel, Text, Image).
+- File Type Support: Supported file types include:
   - `.pdf` (PDF files)
   - `.xlsx` (Excel files)
   - `.txt` (Text files)
@@ -29,99 +29,23 @@ This PowerShell script automatically organizes files from your Desktop into cate
 - **Text files**: Moved to `file_organization\TextFiles`
 - **Image files (PNG, JPG)**: Moved to `file_organization\Images`
 
-## Script Details
+## Running the Script
 
-```powershell
-# Define the desktop path dynamically
-$desktopPath = [System.Environment]::GetFolderPath('Desktop')
-$mainFolderPath = "$desktopPath\file_organization"
+To run the script, follow these steps:
 
-# Subfolder paths with _automated_folder suffix
-$pdfFolder = "$mainFolderPath\PDFs"
-$excelFolder = "$mainFolderPath\ExcelFiles"
-$textFolder = "$mainFolderPath\TextFiles"
-$imageFolder = "$mainFolderPath\Images"  # For image files like PNG, JPG, etc.
+1. Save the script as `sort_files.ps1` on your system.
+2. Open **PowerShell** as an Administrator.
+3. Navigate to the folder where the script is saved.
+4. Run the script by typing `.\sort_files.ps1`.
 
-# Create the main folder if it doesn't exist
-if (-not (Test-Path -Path $mainFolderPath)) {
-    New-Item -Path $mainFolderPath -ItemType Directory
-    Write-Host "Main folder created at: $mainFolderPath"
-} else {
-    Write-Host "Main folder already exists at: $mainFolderPath"
-}
+### Scheduling the Script
 
-# Create subfolders for PDFs, Excel files, Text files, and Images with _automated_folder suffix
-$subfolders = @($pdfFolder, $excelFolder, $textFolder, $imageFolder)
-foreach ($folder in $subfolders) {
-    if (-not (Test-Path -Path $folder)) {
-        New-Item -Path $folder -ItemType Directory
-        Write-Host "Folder created: $folder"
-    } else {
-        Write-Host "Folder already exists: $folder"
-    }
-}
+To automatically run the script on a daily basis, you can schedule it using **Task Scheduler**:
 
-# Define the folder where you want to organize the files (e.g., your Desktop)
-$sourceFolder = $desktopPath
-
-# Get all files in the source folder (Desktop)
-$files = Get-ChildItem -Path $sourceFolder -File
-
-# Organize the files into their respective folders based on file type
-foreach ($file in $files) {
-    # Check the file type and move to the respective folder
-    switch ($file.Extension.ToLower()) {
-        ".pdf" {
-            # Move PDF files if folder exists
-            if (Test-Path -Path $pdfFolder) {
-                Move-Item -Path $file.FullName -Destination $pdfFolder
-                Write-Host "Moved PDF file: $($file.Name)"
-            } else {
-                Write-Host "PDF folder does not exist: $pdfFolder"
-            }
-        }
-        ".xlsx" {
-            # Move Excel files if folder exists
-            if (Test-Path -Path $excelFolder) {
-                Move-Item -Path $file.FullName -Destination $excelFolder
-                Write-Host "Moved Excel file: $($file.Name)"
-            } else {
-                Write-Host "Excel folder does not exist: $excelFolder"
-            }
-        }
-        ".txt" {
-            # Move Text files if folder exists
-            if (Test-Path -Path $textFolder) {
-                Move-Item -Path $file.FullName -Destination $textFolder
-                Write-Host "Moved Text file: $($file.Name)"
-            } else {
-                Write-Host "Text folder does not exist: $textFolder"
-            }
-        }
-        ".jpg" {
-            # Move JPG image files if folder exists
-            if (Test-Path -Path $imageFolder) {
-                Move-Item -Path $file.FullName -Destination $imageFolder
-                Write-Host "Moved JPG image file: $($file.Name)"
-            } else {
-                Write-Host "Image folder does not exist: $imageFolder"
-            }
-        }
-        ".png" {
-            # Move PNG image files if folder exists
-            if (Test-Path -Path $imageFolder) {
-                Move-Item -Path $file.FullName -Destination $imageFolder
-                Write-Host "Moved PNG image file: $($file.Name)"
-            } else {
-                Write-Host "Image folder does not exist: $imageFolder"
-            }
-        }
-        Default {
-            Write-Host "No action for file: $($file.Name)"
-        }
-    }
-}
-```
+1. Open **Task Scheduler** and click on **Create Basic Task**.
+2. Name the task and set the trigger to **Daily**.
+3. Under **Action**, choose **Start a Program**, and select the `sort_files.ps1` script.
+4. Finish the setup and let the task run automatically each day.
 
 ## Conclusion
 
